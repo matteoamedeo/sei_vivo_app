@@ -18,7 +18,7 @@ export default function OnboardingFrequencyScreen() {
   const [checkinTime, setCheckinTime] = useState('10:00');
   const [loading, setLoading] = useState(false);
   const [customInterval, setCustomInterval] = useState('');
-  const [selectedOption, setSelectedOption] = useState('48'); // '24', '48', 'custom'
+  const [selectedOption, setSelectedOption] = useState('48'); // '5min', '24', '48', 'custom'
 
   const handleContinue = async () => {
     if (!user) {
@@ -27,8 +27,11 @@ export default function OnboardingFrequencyScreen() {
     }
 
     let finalInterval = intervalHours;
-    if (selectedOption === 'custom') {
-      const custom = parseInt(customInterval);
+    if (selectedOption === '5min') {
+      // 5 minuti = 5/60 = 0.083 ore
+      finalInterval = 5 / 60;
+    } else if (selectedOption === 'custom') {
+      const custom = parseFloat(customInterval);
       if (isNaN(custom) || custom <= 0) {
         Alert.alert('Errore', 'Inserisci un numero valido per l\'intervallo personalizzato');
         return;
@@ -62,6 +65,28 @@ export default function OnboardingFrequencyScreen() {
         </ThemedText>
 
         <ThemedView style={styles.options}>
+          <TouchableOpacity
+            style={[
+              styles.option,
+              selectedOption === '5min' && { backgroundColor: colors.tint, borderColor: colors.tint },
+              { borderColor: colors.tabIconDefault },
+            ]}
+            onPress={() => {
+              setSelectedOption('5min');
+              setIntervalHours(5 / 60);
+            }}>
+            <View style={styles.radio}>
+              {selectedOption === '5min' && <View style={styles.radioInner} />}
+            </View>
+            <ThemedText
+              style={[
+                styles.optionText,
+                selectedOption === '5min' && { color: 'white', fontWeight: '600' },
+              ]}>
+              5 minuti (test)
+            </ThemedText>
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={[
               styles.option,
@@ -134,7 +159,7 @@ export default function OnboardingFrequencyScreen() {
                 placeholderTextColor={colors.tabIconDefault}
                 value={customInterval}
                 onChangeText={setCustomInterval}
-                keyboardType="numeric"
+                keyboardType="decimal-pad"
               />
             </View>
           )}

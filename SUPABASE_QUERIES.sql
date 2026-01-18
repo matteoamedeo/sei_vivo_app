@@ -13,7 +13,7 @@
 -- Tabella profiles (estensione di auth.users)
 CREATE TABLE IF NOT EXISTS profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  checkin_interval_hours INT NOT NULL DEFAULT 48,
+  checkin_interval_hours NUMERIC(10, 4) NOT NULL DEFAULT 48,
   checkin_time TIME NOT NULL DEFAULT '10:00',
   last_checkin_at TIMESTAMPTZ,
   timezone TEXT DEFAULT 'Europe/Rome',
@@ -190,7 +190,7 @@ RETURNS TABLE (
   user_id UUID,
   profile_id UUID,
   last_checkin_at TIMESTAMPTZ,
-  checkin_interval_hours INT,
+  checkin_interval_hours NUMERIC,
   hours_overdue NUMERIC
 ) AS $$
 BEGIN

@@ -26,6 +26,7 @@ export default function HomeScreen() {
   const [checkingIn, setCheckingIn] = useState(false);
   const [checkedInToday, setCheckedInToday] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [timeRemaining, setTimeRemaining] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
     if (user) {
@@ -34,6 +35,39 @@ export default function HomeScreen() {
       return () => clearInterval(interval);
     }
   }, [user]);
+
+  // Timer che aggiorna ogni secondo
+  useEffect(() => {
+    const updateTimer = () => {
+      if (!lastCheckIn || !profile?.checkin_interval_hours) {
+        setTimeRemaining({ hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
+
+      const lastCheckInDate = new Date(lastCheckIn);
+      const intervalHours = parseFloat(profile.checkin_interval_hours) || 48;
+      const nextCheckInTime = new Date(lastCheckInDate.getTime() + intervalHours * 60 * 60 * 1000);
+      const now = new Date();
+      const diffMs = nextCheckInTime.getTime() - now.getTime();
+
+      if (diffMs <= 0) {
+        setTimeRemaining({ hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
+
+      const totalSeconds = Math.floor(diffMs / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      setTimeRemaining({ hours, minutes, seconds });
+    };
+
+    updateTimer(); // Aggiorna immediatamente
+    const timerInterval = setInterval(updateTimer, 1000); // Aggiorna ogni secondo
+
+    return () => clearInterval(timerInterval);
+  }, [lastCheckIn, profile?.checkin_interval_hours]);
 
   const loadStatus = async () => {
     if (!user) return;
@@ -130,6 +164,26 @@ export default function HomeScreen() {
     }
   };
 
+  const formatTimerCountdown = () => {
+    if (!lastCheckIn || !profile?.checkin_interval_hours) {
+      return '--:--:--';
+    }
+
+    const { hours, minutes, seconds } = timeRemaining;
+    
+    // Se il tempo è scaduto
+    if (hours === 0 && minutes === 0 && seconds === 0) {
+      return '00:00:00';
+    }
+
+    // Mostra formato HH:MM:SS se ci sono ore, altrimenti MM:SS
+    if (hours > 0) {
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    } else {
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+  };
+
   return (
     <ThemedView style={styles.container}>
       <View style={styles.statusContainer}>
@@ -139,20 +193,27 @@ export default function HomeScreen() {
         </ThemedText>
       </View>
 
-      {status === 'WARNING' && hoursRemaining !== null && (
+      {lastCheckIn && profile?.checkin_interval_hours && (
         <View style={styles.countdownContainer}>
           <ThemedText style={styles.countdownLabel}>Prossimo check-in</ThemedText>
-          <ThemedText style={styles.countdownTime}>{formatTimeRemaining()}</ThemedText>
-          <View style={styles.progressBarContainer}>
-            <View
-              style={[
-                styles.progressBar,
-                {
-                  width: `${Math.max(0, Math.min(100, (hoursRemaining / (profile?.checkin_interval_hours || 48)) * 100))}%`,
-                },
-              ]}
-            />
-          </View>
+          <ThemedText style={[styles.countdownTime, { fontFamily: 'monospace', fontSize: 32 }]}>
+            {formatTimerCountdown()}
+          </ThemedText>
+          {hoursRemaining !== null && profile?.checkin_interval_hours && (
+            <View style={styles.progressBarContainer}>
+              <View
+                style={[
+                  styles.progressBar,
+                  {
+                    width: `${Math.max(0, Math.min(100, 
+                      ((parseFloat(profile.checkin_interval_hours) - hoursRemaining) / parseFloat(profile.checkin_interval_hours)) * 100
+                    ))}%`,
+                    backgroundColor: status === 'CRITICAL' ? '#ff4444' : status === 'WARNING' ? '#ffaa00' : '#44ff44',
+                  },
+                ]}
+              />
+            </View>
+          )}
         </View>
       )}
 
@@ -217,15 +278,19 @@ const styles = StyleSheet.create({
   },
   countdownContainer: {
     alignItems: 'center',
-    gap: 4,
+    gap: 8,
+    width: '100%',
+    paddingVertical: 16,
   },
   countdownLabel: {
     fontSize: 14,
     opacity: 0.7,
   },
   countdownTime: {
-    fontSize: 20,
+    fontSize: 32,
     fontWeight: '600',
+    fontFamily: 'monospace',
+    letterSpacing: 2,
   },
   progressBarContainer: {
     width: '100%',

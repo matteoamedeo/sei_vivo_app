@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, Alert, ActivityIndicator, ScrollView } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, Alert, ActivityIndicator, ScrollView, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useAuth } from '@/contexts/AuthContext';
@@ -21,6 +21,8 @@ export default function SettingsScreen() {
   const [checkinTime, setCheckinTime] = useState('10:00');
   const [timezone, setTimezone] = useState('Europe/Rome');
   const [language, setLanguage] = useState('it');
+  const [selectedIntervalOption, setSelectedIntervalOption] = useState('48'); // '5min', '24', '48', 'custom'
+  const [customInterval, setCustomInterval] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -35,9 +37,22 @@ export default function SettingsScreen() {
       const data = await getProfile(user.id);
       if (data) {
         setProfile(data);
-        setCheckinInterval(data.checkin_interval_hours);
+        const interval = parseFloat(data.checkin_interval_hours) || 48;
+        setCheckinInterval(interval);
         setCheckinTime(data.checkin_time);
         setTimezone(data.timezone || 'Europe/Rome');
+        
+        // Determina quale opzione selezionare in base all'intervallo corrente
+        if (interval === 5 / 60 || Math.abs(interval - (5 / 60)) < 0.001) {
+          setSelectedIntervalOption('5min');
+        } else if (interval === 24) {
+          setSelectedIntervalOption('24');
+        } else if (interval === 48) {
+          setSelectedIntervalOption('48');
+        } else {
+          setSelectedIntervalOption('custom');
+          setCustomInterval(interval.toString());
+        }
       }
     } catch (error) {
       console.error('Errore nel caricamento profilo:', error);
@@ -49,10 +64,22 @@ export default function SettingsScreen() {
   const handleSave = async () => {
     if (!user) return;
 
+    let finalInterval = checkinInterval;
+    if (selectedIntervalOption === '5min') {
+      finalInterval = 5 / 60; // 0.083 ore
+    } else if (selectedIntervalOption === 'custom') {
+      const custom = parseFloat(customInterval);
+      if (isNaN(custom) || custom <= 0) {
+        Alert.alert('Errore', 'Inserisci un numero valido per l\'intervallo personalizzato');
+        return;
+      }
+      finalInterval = custom;
+    }
+
     setSaving(true);
     try {
       await updateProfile(user.id, {
-        checkin_interval_hours: checkinInterval,
+        checkin_interval_hours: finalInterval,
         checkin_time: checkinTime,
         timezone: timezone,
       });
@@ -103,21 +130,109 @@ export default function SettingsScreen() {
             Frequenza Check-in
           </ThemedText>
 
-          <ThemedText style={styles.label}>Intervallo (ore)</ThemedText>
-          <TextInput
-            style={[styles.input, { color: colors.text, borderColor: colors.tabIconDefault }]}
-            placeholder="48"
-            placeholderTextColor={colors.tabIconDefault}
-            value={checkinInterval.toString()}
-            onChangeText={(text) => {
-              const num = parseInt(text);
-              if (!isNaN(num) && num > 0) {
-                setCheckinInterval(num);
-              }
-            }}
-            keyboardType="numeric"
-            editable={!saving}
-          />
+          <ThemedText style={styles.label}>Intervallo</ThemedText>
+          
+          <ThemedView style={styles.intervalOptions}>
+            <TouchableOpacity
+              style={[
+                styles.intervalOption,
+                selectedIntervalOption === '5min' && { backgroundColor: colors.tint, borderColor: colors.tint },
+                { borderColor: colors.tabIconDefault },
+              ]}
+              onPress={() => {
+                setSelectedIntervalOption('5min');
+                setCheckinInterval(5 / 60);
+              }}>
+              <View style={styles.radio}>
+                {selectedIntervalOption === '5min' && <View style={styles.radioInner} />}
+              </View>
+              <ThemedText
+                style={[
+                  styles.intervalOptionText,
+                  selectedIntervalOption === '5min' && { color: 'white', fontWeight: '600' },
+                ]}>
+                5 minuti (test)
+              </ThemedText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.intervalOption,
+                selectedIntervalOption === '24' && { backgroundColor: colors.tint, borderColor: colors.tint },
+                { borderColor: colors.tabIconDefault },
+              ]}
+              onPress={() => {
+                setSelectedIntervalOption('24');
+                setCheckinInterval(24);
+              }}>
+              <View style={styles.radio}>
+                {selectedIntervalOption === '24' && <View style={styles.radioInner} />}
+              </View>
+              <ThemedText
+                style={[
+                  styles.intervalOptionText,
+                  selectedIntervalOption === '24' && { color: 'white', fontWeight: '600' },
+                ]}>
+                24 ore
+              </ThemedText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.intervalOption,
+                selectedIntervalOption === '48' && { backgroundColor: colors.tint, borderColor: colors.tint },
+                { borderColor: colors.tabIconDefault },
+              ]}
+              onPress={() => {
+                setSelectedIntervalOption('48');
+                setCheckinInterval(48);
+              }}>
+              <View style={styles.radio}>
+                {selectedIntervalOption === '48' && <View style={styles.radioInner} />}
+              </View>
+              <ThemedText
+                style={[
+                  styles.intervalOptionText,
+                  selectedIntervalOption === '48' && { color: 'white', fontWeight: '600' },
+                ]}>
+                48 ore (consigliato)
+              </ThemedText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.intervalOption,
+                selectedIntervalOption === 'custom' && { backgroundColor: colors.tint, borderColor: colors.tint },
+                { borderColor: colors.tabIconDefault },
+              ]}
+              onPress={() => setSelectedIntervalOption('custom')}>
+              <View style={styles.radio}>
+                {selectedIntervalOption === 'custom' && <View style={styles.radioInner} />}
+              </View>
+              <ThemedText
+                style={[
+                  styles.intervalOptionText,
+                  selectedIntervalOption === 'custom' && { color: 'white', fontWeight: '600' },
+                ]}>
+                Personalizzato
+              </ThemedText>
+            </TouchableOpacity>
+
+            {selectedIntervalOption === 'custom' && (
+              <View style={styles.customInputContainer}>
+                <ThemedText style={styles.customLabel}>Intervallo personalizzato (ore)</ThemedText>
+                <TextInput
+                  style={[styles.input, { color: colors.text, borderColor: colors.tabIconDefault }]}
+                  placeholder="es. 72"
+                  placeholderTextColor={colors.tabIconDefault}
+                  value={customInterval}
+                  onChangeText={setCustomInterval}
+                  keyboardType="decimal-pad"
+                  editable={!saving}
+                />
+              </View>
+            )}
+          </ThemedView>
 
           <ThemedText style={styles.label}>Orario preferito</ThemedText>
           <TextInput
@@ -283,5 +398,43 @@ const styles = StyleSheet.create({
   resetButtonText: {
     fontSize: 16,
     fontWeight: '600',
+  },
+  intervalOptions: {
+    gap: 12,
+    marginTop: 8,
+  },
+  intervalOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 2,
+    gap: 12,
+  },
+  radio: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: 'white',
+  },
+  intervalOptionText: {
+    fontSize: 16,
+  },
+  customInputContainer: {
+    marginTop: 12,
+    gap: 8,
+  },
+  customLabel: {
+    fontSize: 14,
+    fontWeight: '500',
   },
 });
