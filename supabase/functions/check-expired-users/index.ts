@@ -3,6 +3,7 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import nodemailer from 'npm:nodemailer';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -150,64 +151,78 @@ Team SILEME
           continue;
         }
 
-        // OPZIONE 1: Usa un servizio email esterno (es. Resend, SendGrid)
-        // Scommenta e configura secondo il servizio scelto
-        
-        // ESEMPIO con Resend (scommenta e configura):
-        /*
-        const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-        if (RESEND_API_KEY) {
-          const resendResponse = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${RESEND_API_KEY}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              from: 'SILEME <noreply@sileme.app>',
+        // Invia email usando SMTP configurato in Supabase
+        const smtpHost = Deno.env.get('SMTP_HOST');
+        const smtpPort = Deno.env.get('SMTP_PORT') || '465';
+        const smtpUser = Deno.env.get('SMTP_USER');
+        const smtpPass = Deno.env.get('SMTP_PASS');
+        const smtpFrom = Deno.env.get('SMTP_FROM') || 'SILEME <noreply@sileme.app>';
+
+        let emailSent = false;
+        let emailError = null;
+
+        if (smtpHost && smtpUser && smtpPass) {
+          try {
+            // Crea transporter SMTP (usa port 465 con secure: true per Supabase)
+            const transporter = nodemailer.createTransport({
+              host: smtpHost,
+              port: Number(smtpPort), // Port 465 per TLS
+              secure: true, // true per port 465, false per altri port
+              auth: {
+                user: smtpUser,
+                pass: smtpPass,
+              },
+              // Aggiungi timeout per evitare hang
+              connectionTimeout: 10000,
+              greetingTimeout: 10000,
+              socketTimeout: 10000,
+            });
+
+            // Verifica la connessione SMTP
+            await transporter.verify();
+
+            // Invia email
+            const mailResult = await transporter.sendMail({
+              from: smtpFrom,
               to: contact.email,
               subject: emailSubject,
+              text: emailBody,
               html: emailBody.replace(/\n/g, '<br>'),
-            }),
-          });
+            });
 
-          if (resendResponse.ok) {
-            // Email inviata con successo
+            if (mailResult.accepted && mailResult.accepted.length > 0) {
+              emailSent = true;
+              
+              // Aggiorna alert come inviato
+              await supabaseAdmin
+                .from('alerts')
+                .update({ status: 'sent' })
+                .eq('id', alertData.id);
+            } else {
+              emailError = 'Email non accettata dal server SMTP';
+            }
+          } catch (smtpError) {
+            console.error('Errore invio email SMTP:', smtpError);
+            emailError = smtpError.message || 'Errore invio email via SMTP';
+            
+            // Aggiorna alert come fallito
             await supabaseAdmin
               .from('alerts')
-              .update({ status: 'sent' })
+              .update({ status: 'failed' })
               .eq('id', alertData.id);
-            
-            results.push({
-              user_id: expiredUser.user_id,
-              contact_id: contact.id,
-              contact_email: contact.email,
-              status: 'sent',
-              alert_id: alertData.id,
-            });
-            alertsCreated.push(alertData.id);
-          } else {
-            throw new Error('Errore invio email via Resend');
           }
+        } else {
+          emailError = 'Variabili SMTP non configurate. Configura SMTP_HOST, SMTP_USER, SMTP_PASS nelle impostazioni della funzione.';
+          console.warn('SMTP non configurato, alert rimane in stato pending');
         }
-        */
-
-        // OPZIONE 2: Per ora, registra solo l'alert nel database
-        // L'email dovrà essere inviata tramite un altro servizio configurato separatamente
-        // Oppure puoi configurare SMTP di Supabase (vedi documentazione)
-        
-        // Marca l'alert come "pending" - sarà inviato da un altro sistema
-        // o puoi configurare un webhook che legge gli alert con status='pending'
-        // e li invia tramite il tuo servizio email preferito
 
         results.push({
           user_id: expiredUser.user_id,
           contact_id: contact.id,
           contact_email: contact.email,
-          status: 'pending', // Cambia in 'sent' se email inviata con successo
+          status: emailSent ? 'sent' : (emailError ? 'failed' : 'pending'),
           alert_id: alertData.id,
-          email_subject: emailSubject,
-          email_body: emailBody,
+          error: emailError || undefined,
         });
         alertsCreated.push(alertData.id);
       }

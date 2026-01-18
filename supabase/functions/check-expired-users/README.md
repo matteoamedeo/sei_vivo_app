@@ -25,21 +25,34 @@ supabase functions deploy check-expired-users
 
 ### 4. Configura Cron Job
 
-Nel dashboard Supabase:
-- Vai su **Database** > **Extensions**
-- Abilita **pg_cron** (se non già abilitato)
-- Vai su **Database** > **Cron Jobs**
-- Crea nuovo cron job:
-  - **Name**: `check-expired-users-cron`
-  - **Schedule**: `*/15 * * * *` (ogni 15 minuti)
-  - **Command**: 
-    ```sql
-    SELECT net.http_post(
-      url:='https://YOUR_PROJECT.supabase.co/functions/v1/check-expired-users',
-      headers:='{"Content-Type": "application/json", "Authorization": "Bearer YOUR_SERVICE_ROLE_KEY"}'::jsonb,
-      body:='{}'::jsonb
-    );
-    ```
+**📖 Guida Completa:** Vedi il file `CONFIGURAZIONE_CRON_JOB.md` nella root del progetto per istruzioni dettagliate.
+
+**Metodo Rapido (Dashboard):**
+1. Vai su **Database** > **Extensions** > Abilita `pg_cron` e `pg_net`
+2. Vai su **Database** > **Cron Jobs** > **New Cron Job**
+3. Configura:
+   - **Name**: `check-expired-users-hourly`
+   - **Schedule**: `0 * * * *` (ogni ora)
+   - **Command SQL**: Vedi `CONFIGURAZIONE_CRON_JOB.md` per il comando completo
+
+**Metodo SQL (Alternativa):**
+Esegui nel SQL Editor (sostituisci `YOUR_PROJECT_REF` e `YOUR_SERVICE_ROLE_KEY`):
+```sql
+SELECT cron.schedule(
+  'check-expired-users-hourly',
+  '0 * * * *',
+  $$
+  SELECT net.http_post(
+    url := 'https://YOUR_PROJECT_REF.supabase.co/functions/v1/check-expired-users',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'Authorization', 'Bearer YOUR_SERVICE_ROLE_KEY'
+    ),
+    body := '{}'::jsonb
+  );
+  $$
+);
+```
 
 ## 📧 Configurazione Invio Email
 
