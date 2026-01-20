@@ -230,6 +230,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 18,
+    lineHeight: 23,
   },
   label: {
     fontSize: 16,
@@ -248,6 +249,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 18,
+    lineHeight: 23,
     fontWeight: '600',
   },
   customInputContainer: {

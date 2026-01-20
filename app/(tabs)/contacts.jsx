@@ -268,6 +268,7 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     color: 'white',
     fontSize: 14,
+    lineHeight: 18,
     fontWeight: '600',
   },
   premiumHint: {
@@ -313,6 +314,7 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     fontSize: 16,
+    lineHeight: 20,
     fontWeight: '600',
   },
   addButton: {
@@ -323,6 +325,7 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     fontSize: 16,
+    lineHeight: 20,
     fontWeight: '600',
   },
   addButtonMain: {
@@ -333,6 +336,7 @@ const styles = StyleSheet.create({
   },
   addButtonMainText: {
     fontSize: 18,
+    lineHeight: 23,
     fontWeight: '600',
   },
 });

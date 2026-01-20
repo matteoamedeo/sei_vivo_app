@@ -371,6 +371,7 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     fontSize: 16,
+    lineHeight: 20,
     fontWeight: '600',
   },
   infoText: {
@@ -387,6 +388,7 @@ const styles = StyleSheet.create({
   },
   logoutButtonText: {
     fontSize: 16,
+    lineHeight: 20,
     fontWeight: '600',
   },
   resetButton: {
@@ -397,6 +399,7 @@ const styles = StyleSheet.create({
   },
   resetButtonText: {
     fontSize: 16,
+    lineHeight: 20,
     fontWeight: '600',
   },
   intervalOptions: {
@@ -428,6 +431,7 @@ const styles = StyleSheet.create({
   },
   intervalOptionText: {
     fontSize: 16,
+    lineHeight: 20,
   },
   customInputContainer: {
     marginTop: 12,

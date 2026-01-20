@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, View, ActivityIndicator, Alert } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { CHECKIN_CONFIG } from '@/constants/checkinConfig';
+import { Colors } from '@/constants/theme';
 import { useAuth } from '@/contexts/AuthContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Colors } from '@/constants/theme';
 import {
-  performCheckIn,
   getCheckInStatus,
   getHoursUntilNextCheckIn,
   getProfile,
   hasCheckedInToday,
+  performCheckIn,
 } from '@/lib/database';
 import * as Haptics from 'expo-haptics';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function HomeScreen() {
   const { user } = useAuth();
@@ -27,6 +28,7 @@ export default function HomeScreen() {
   const [checkedInToday, setCheckedInToday] = useState(false);
   const [profile, setProfile] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  const [canCheckIn, setCanCheckIn] = useState(true);
 
   useEffect(() => {
     if (user) {
@@ -69,6 +71,43 @@ export default function HomeScreen() {
     return () => clearInterval(timerInterval);
   }, [lastCheckIn, profile?.checkin_interval_hours]);
 
+  // Controlla se il bottone può essere cliccato in base alla configurazione
+  useEffect(() => {
+    const checkCanCheckIn = () => {
+      if (!lastCheckIn) {
+        setCanCheckIn(true);
+        return;
+      }
+
+      const now = new Date();
+      const lastCheckInDate = new Date(lastCheckIn);
+
+      if (CHECKIN_CONFIG.resetType === 'midnight') {
+        // Modalità mezzanotte: controlla se l'ultimo check-in è di oggi
+        const lastCheckInDay = new Date(lastCheckInDate);
+        lastCheckInDay.setHours(0, 0, 0, 0);
+        
+        const today = new Date(now);
+        today.setHours(0, 0, 0, 0);
+        
+        // Se sono giorni diversi, significa che è passata la mezzanotte
+        setCanCheckIn(lastCheckInDay.getTime() < today.getTime());
+      } else if (CHECKIN_CONFIG.resetType === 'minutes') {
+        // Modalità minuti: controlla se sono passati almeno resetAfterMinutes minuti
+        const diffMs = now.getTime() - lastCheckInDate.getTime();
+        const diffMinutes = diffMs / (1000 * 60);
+        setCanCheckIn(diffMinutes >= CHECKIN_CONFIG.resetAfterMinutes);
+      } else {
+        setCanCheckIn(true);
+      }
+    };
+
+    checkCanCheckIn();
+    const checkInterval = setInterval(checkCanCheckIn, 1000); // Controlla ogni secondo
+
+    return () => clearInterval(checkInterval);
+  }, [lastCheckIn]);
+
   const loadStatus = async () => {
     if (!user) return;
 
@@ -85,6 +124,23 @@ export default function HomeScreen() {
       setLastCheckIn(profile?.last_checkin_at);
       setCheckedInToday(hasCheckedIn);
       setProfile(profile);
+      
+      // Aggiorna anche canCheckIn in base alla configurazione
+      if (CHECKIN_CONFIG.resetType === 'midnight') {
+        setCanCheckIn(!hasCheckedIn);
+      } else {
+        // Per 'minutes', il controllo viene fatto nel useEffect dedicato
+        // qui impostiamo solo uno stato iniziale
+        if (profile?.last_checkin_at) {
+          const now = new Date();
+          const lastCheckInDate = new Date(profile.last_checkin_at);
+          const diffMs = now.getTime() - lastCheckInDate.getTime();
+          const diffMinutes = diffMs / (1000 * 60);
+          setCanCheckIn(diffMinutes >= CHECKIN_CONFIG.resetAfterMinutes);
+        } else {
+          setCanCheckIn(true);
+        }
+      }
     } catch (error) {
       console.error('Errore nel caricamento stato:', error);
     } finally {
@@ -224,26 +280,26 @@ export default function HomeScreen() {
           style={[
             styles.checkInButton,
             {
-              backgroundColor: checkedInToday ? colors.tabIconDefault : colors.tint,
+              backgroundColor: canCheckIn ? colors.tint : colors.tabIconDefault,
               opacity: checkingIn ? 0.6 : 1,
             },
           ]}
           onPress={handleCheckIn}
-          disabled={checkedInToday || checkingIn}>
+          disabled={!canCheckIn || checkingIn}>
           {checkingIn ? (
             <ActivityIndicator color={
-              checkedInToday 
-                ? colors.text 
-                : (colorScheme === 'dark' ? colors.text : 'white')
+              canCheckIn 
+                ? (colorScheme === 'dark' ? colors.text : 'white')
+                : colors.text
             } />
           ) : (
             <ThemedText style={[
               styles.checkInButtonText,
-              checkedInToday 
-                ? { color: colors.text }
-                : { color: colorScheme === 'dark' ? colors.text : 'white' }
+              canCheckIn 
+                ? { color: colorScheme === 'dark' ? colors.text : 'white' }
+                : { color: colors.text }
             ]}>
-              {checkedInToday ? '✓ Già fatto oggi' : 'SONO VIVO'}
+              {canCheckIn ? 'SONO VIVO' : (CHECKIN_CONFIG.resetType === 'midnight' ? '✓ Già fatto oggi' : `Attendi ${CHECKIN_CONFIG.resetAfterMinutes} minuti`)}
             </ThemedText>
           )}
         </TouchableOpacity>
@@ -316,14 +372,15 @@ const styles = StyleSheet.create({
   },
   checkInButton: {
     width: '100%',
-    padding: 28,
+    padding: 24,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 80,
+    minHeight: 90,
   },
   checkInButtonText: {
     fontSize: 24,
+    lineHeight: 30,
     fontWeight: 'bold',
   },
   lastCheckInContainer: {

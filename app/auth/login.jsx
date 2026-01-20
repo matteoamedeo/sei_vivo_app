@@ -153,10 +153,12 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
+    lineHeight: 20,
     fontWeight: '600',
   },
   buttonTextSecondary: {
     fontSize: 16,
+    lineHeight: 20,
     fontWeight: '600',
   },
 });

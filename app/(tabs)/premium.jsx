@@ -184,6 +184,7 @@ const styles = StyleSheet.create({
   },
   activateButtonText: {
     fontSize: 18,
+    lineHeight: 23,
     fontWeight: '600',
   },
 });
