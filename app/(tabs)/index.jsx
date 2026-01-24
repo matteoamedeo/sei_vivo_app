@@ -243,8 +243,8 @@ export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.statusContainer}>
-        <ThemedText style={styles.statusEmoji}>{getStatusEmoji()}</ThemedText>
-        <ThemedText type="title" style={[styles.statusText, { color: getStatusColor() }]}>
+        <ThemedText type="bigTitle">{getStatusEmoji()}</ThemedText>
+        <ThemedText style={[styles.statusText, { color: getStatusColor() }]}>
           {getStatusText()}
         </ThemedText>
       </View>
@@ -324,9 +324,6 @@ const styles = StyleSheet.create({
   statusContainer: {
     alignItems: 'center',
     gap: 8,
-  },
-  statusEmoji: {
-    fontSize: 48,
   },
   statusText: {
     fontSize: 24,
