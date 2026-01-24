@@ -244,15 +244,15 @@ export default function HomeScreen() {
     <ThemedView style={styles.container}>
       <View style={styles.statusContainer}>
         <ThemedText type="bigTitle">{getStatusEmoji()}</ThemedText>
-        <ThemedText style={[styles.statusText, { color: getStatusColor() }]}>
+        <ThemedText type="large" style={[{ color: getStatusColor() }, styles.statusText]}>
           {getStatusText()}
         </ThemedText>
       </View>
 
       {lastCheckIn && profile?.checkin_interval_hours && (
         <View style={styles.countdownContainer}>
-          <ThemedText style={styles.countdownLabel}>Prossimo check-in</ThemedText>
-          <ThemedText style={[styles.countdownTime, { fontFamily: 'monospace', fontSize: 32 }]}>
+          <ThemedText type="smallMedium" style={styles.countdownLabel}>Prossimo check-in</ThemedText>
+          <ThemedText type="title" style={[styles.countdownTime, { fontFamily: 'monospace' }]}>
             {formatTimerCountdown()}
           </ThemedText>
           {hoursRemaining !== null && profile?.checkin_interval_hours && (
@@ -274,7 +274,7 @@ export default function HomeScreen() {
       )}
 
       <View style={styles.checkInContainer}>
-        <ThemedText style={styles.questionText}>Tutto bene oggi?</ThemedText>
+        <ThemedText type="subtitle" style={styles.questionText}>Tutto bene oggi?</ThemedText>
         
         <TouchableOpacity
           style={[
@@ -293,7 +293,7 @@ export default function HomeScreen() {
                 : colors.text
             } />
           ) : (
-            <ThemedText style={[
+            <ThemedText type="large" style={[
               styles.checkInButtonText,
               canCheckIn 
                 ? { color: colorScheme === 'dark' ? colors.text : 'white' }
@@ -306,8 +306,8 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.lastCheckInContainer}>
-        <ThemedText style={styles.lastCheckInLabel}>Ultimo check-in</ThemedText>
-        <ThemedText style={styles.lastCheckInTime}>{formatLastCheckIn()}</ThemedText>
+        <ThemedText type="smallMedium" style={styles.lastCheckInLabel}>Ultimo check-in</ThemedText>
+        <ThemedText type="default" style={styles.lastCheckInTime}>{formatLastCheckIn()}</ThemedText>
       </View>
     </ThemedView>
   );
@@ -326,7 +326,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   statusText: {
-    fontSize: 24,
     fontWeight: 'bold',
   },
   countdownContainer: {
@@ -336,13 +335,10 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   countdownLabel: {
-    fontSize: 14,
     opacity: 0.7,
   },
   countdownTime: {
-    fontSize: 32,
     fontWeight: '600',
-    fontFamily: 'monospace',
     letterSpacing: 2,
   },
   progressBarContainer: {
@@ -364,7 +360,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   questionText: {
-    fontSize: 20,
     opacity: 0.8,
   },
   checkInButton: {
@@ -376,8 +371,6 @@ const styles = StyleSheet.create({
     minHeight: 90,
   },
   checkInButtonText: {
-    fontSize: 24,
-    lineHeight: 30,
     fontWeight: 'bold',
   },
   lastCheckInContainer: {
@@ -386,11 +379,9 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
   },
   lastCheckInLabel: {
-    fontSize: 14,
     opacity: 0.6,
   },
   lastCheckInTime: {
-    fontSize: 16,
     opacity: 0.8,
   },
 });

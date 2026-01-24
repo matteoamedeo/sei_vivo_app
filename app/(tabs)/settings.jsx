@@ -130,7 +130,7 @@ export default function SettingsScreen() {
             Frequenza Check-in
           </ThemedText>
 
-          <ThemedText style={styles.label}>Intervallo</ThemedText>
+          <ThemedText type="default" style={styles.label}>Intervallo</ThemedText>
           
           <ThemedView style={styles.intervalOptions}>
             <TouchableOpacity
@@ -147,6 +147,7 @@ export default function SettingsScreen() {
                 {selectedIntervalOption === '5min' && <View style={styles.radioInner} />}
               </View>
               <ThemedText
+                type="default"
                 style={[
                   styles.intervalOptionText,
                   selectedIntervalOption === '5min' && { color: 'white', fontWeight: '600' },
@@ -169,6 +170,7 @@ export default function SettingsScreen() {
                 {selectedIntervalOption === '24' && <View style={styles.radioInner} />}
               </View>
               <ThemedText
+                type="default"
                 style={[
                   styles.intervalOptionText,
                   selectedIntervalOption === '24' && { color: 'white', fontWeight: '600' },
@@ -191,6 +193,7 @@ export default function SettingsScreen() {
                 {selectedIntervalOption === '48' && <View style={styles.radioInner} />}
               </View>
               <ThemedText
+                type="default"
                 style={[
                   styles.intervalOptionText,
                   selectedIntervalOption === '48' && { color: 'white', fontWeight: '600' },
@@ -210,6 +213,7 @@ export default function SettingsScreen() {
                 {selectedIntervalOption === 'custom' && <View style={styles.radioInner} />}
               </View>
               <ThemedText
+                type="default"
                 style={[
                   styles.intervalOptionText,
                   selectedIntervalOption === 'custom' && { color: 'white', fontWeight: '600' },
@@ -220,7 +224,7 @@ export default function SettingsScreen() {
 
             {selectedIntervalOption === 'custom' && (
               <View style={styles.customInputContainer}>
-                <ThemedText style={styles.customLabel}>Intervallo personalizzato (ore)</ThemedText>
+                <ThemedText type="smallMedium" style={styles.customLabel}>Intervallo personalizzato (ore)</ThemedText>
                 <TextInput
                   style={[styles.input, { color: colors.text, borderColor: colors.tabIconDefault }]}
                   placeholder="es. 72"
@@ -234,7 +238,7 @@ export default function SettingsScreen() {
             )}
           </ThemedView>
 
-          <ThemedText style={styles.label}>Orario preferito</ThemedText>
+          <ThemedText type="default" style={styles.label}>Orario preferito</ThemedText>
           <TextInput
             style={[styles.input, { color: colors.text, borderColor: colors.tabIconDefault }]}
             placeholder="10:00"
@@ -251,7 +255,7 @@ export default function SettingsScreen() {
             {saving ? (
               <ActivityIndicator color={colorScheme === 'dark' ? colors.text : 'white'} />
             ) : (
-              <ThemedText style={[styles.saveButtonText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>Salva</ThemedText>
+              <ThemedText type="default" style={[styles.saveButtonText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>Salva</ThemedText>
             )}
           </TouchableOpacity>
         </ThemedView>
@@ -260,8 +264,8 @@ export default function SettingsScreen() {
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Lingua
           </ThemedText>
-          <ThemedText style={styles.label}>Lingua</ThemedText>
-          <ThemedText style={styles.infoText}>
+          <ThemedText type="default" style={styles.label}>Lingua</ThemedText>
+          <ThemedText type="smallMedium" style={styles.infoText}>
             Italiano (IT)
           </ThemedText>
         </ThemedView>
@@ -270,8 +274,8 @@ export default function SettingsScreen() {
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Fuso orario
           </ThemedText>
-          <ThemedText style={styles.label}>Fuso orario</ThemedText>
-          <ThemedText style={styles.infoText}>
+          <ThemedText type="default" style={styles.label}>Fuso orario</ThemedText>
+          <ThemedText type="smallMedium" style={styles.infoText}>
             {timezone}
           </ThemedText>
         </ThemedView>
@@ -280,7 +284,7 @@ export default function SettingsScreen() {
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Privacy
           </ThemedText>
-          <ThemedText style={styles.infoText}>
+          <ThemedText type="smallMedium" style={styles.infoText}>
             • Nessun GPS{'\n'}
             • Dati minimi{'\n'}
             • Crittografia{'\n'}
@@ -310,7 +314,7 @@ export default function SettingsScreen() {
                 ]
               );
             }}>
-            <ThemedText style={[styles.resetButtonText, { color: '#ffaa00' }]}>
+            <ThemedText type="default" style={[styles.resetButtonText, { color: '#ffaa00' }]}>
               Reset account
             </ThemedText>
           </TouchableOpacity>
@@ -319,7 +323,7 @@ export default function SettingsScreen() {
         <TouchableOpacity
           style={[styles.logoutButton, { borderColor: '#ff4444' }]}
           onPress={handleSignOut}>
-          <ThemedText style={[styles.logoutButtonText, { color: '#ff4444' }]}>
+          <ThemedText type="default" style={[styles.logoutButtonText, { color: '#ff4444' }]}>
             Esci
           </ThemedText>
         </TouchableOpacity>
@@ -338,8 +342,6 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
     marginBottom: 8,
   },
   section: {
@@ -347,12 +349,10 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 20,
     fontWeight: '600',
     marginBottom: 4,
   },
   label: {
-    fontSize: 16,
     fontWeight: '500',
     marginTop: 8,
     marginBottom: 4,
@@ -361,7 +361,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     padding: 12,
-    fontSize: 16,
   },
   saveButton: {
     padding: 16,
@@ -370,13 +369,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   saveButtonText: {
-    fontSize: 16,
-    lineHeight: 20,
     fontWeight: '600',
   },
   infoText: {
-    fontSize: 14,
-    lineHeight: 22,
     opacity: 0.8,
   },
   logoutButton: {
@@ -387,8 +382,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   logoutButtonText: {
-    fontSize: 16,
-    lineHeight: 20,
     fontWeight: '600',
   },
   resetButton: {
@@ -398,8 +391,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   resetButtonText: {
-    fontSize: 16,
-    lineHeight: 20,
     fontWeight: '600',
   },
   intervalOptions: {
@@ -430,15 +421,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   intervalOptionText: {
-    fontSize: 16,
-    lineHeight: 20,
   },
   customInputContainer: {
     marginTop: 12,
     gap: 8,
   },
   customLabel: {
-    fontSize: 14,
     fontWeight: '500',
   },
 });

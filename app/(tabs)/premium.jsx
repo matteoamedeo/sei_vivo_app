@@ -80,32 +80,32 @@ export default function PremiumScreen() {
 
       {isPremium ? (
         <ThemedView style={styles.premiumActive}>
-          <ThemedText style={styles.premiumActiveText}>
+          <ThemedText type="subtitle" style={styles.premiumActiveText}>
             ✓ Premium attivo
           </ThemedText>
         </ThemedView>
       ) : (
         <ThemedView style={styles.premiumBox}>
-          <ThemedText style={styles.price}>€1.99 / mese</ThemedText>
+          <ThemedText type="huge" style={styles.price}>€1.99 / mese</ThemedText>
         </ThemedView>
       )}
 
       <ThemedView style={styles.features}>
         <View style={styles.featureItem}>
-          <ThemedText style={styles.featureIcon}>✔</ThemedText>
-          <ThemedText style={styles.featureText}>SMS</ThemedText>
+          <ThemedText type="subtitle" style={styles.featureIcon}>✔</ThemedText>
+          <ThemedText type="medium" style={styles.featureText}>SMS</ThemedText>
         </View>
         <View style={styles.featureItem}>
-          <ThemedText style={styles.featureIcon}>✔</ThemedText>
-          <ThemedText style={styles.featureText}>Chiamate</ThemedText>
+          <ThemedText type="subtitle" style={styles.featureIcon}>✔</ThemedText>
+          <ThemedText type="medium" style={styles.featureText}>Chiamate</ThemedText>
         </View>
         <View style={styles.featureItem}>
-          <ThemedText style={styles.featureIcon}>✔</ThemedText>
-          <ThemedText style={styles.featureText}>Più contatti (fino a 5)</ThemedText>
+          <ThemedText type="subtitle" style={styles.featureIcon}>✔</ThemedText>
+          <ThemedText type="medium" style={styles.featureText}>Più contatti (fino a 5)</ThemedText>
         </View>
         <View style={styles.featureItem}>
-          <ThemedText style={styles.featureIcon}>✔</ThemedText>
-          <ThemedText style={styles.featureText}>Storico completo</ThemedText>
+          <ThemedText type="subtitle" style={styles.featureIcon}>✔</ThemedText>
+          <ThemedText type="medium" style={styles.featureText}>Storico completo</ThemedText>
         </View>
       </ThemedView>
 
@@ -117,7 +117,7 @@ export default function PremiumScreen() {
           {activating ? (
             <ActivityIndicator color={colorScheme === 'dark' ? colors.text : 'white'} />
           ) : (
-            <ThemedText style={[styles.activateButtonText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>Attiva</ThemedText>
+            <ThemedText type="medium" style={[styles.activateButtonText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>Attiva</ThemedText>
           )}
         </TouchableOpacity>
       )}
@@ -131,8 +131,6 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
     marginBottom: 32,
     textAlign: 'center',
   },
@@ -144,7 +142,6 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   price: {
-    fontSize: 36,
     fontWeight: 'bold',
   },
   premiumActive: {
@@ -155,7 +152,6 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   premiumActiveText: {
-    fontSize: 20,
     fontWeight: '600',
   },
   features: {
@@ -171,11 +167,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.05)',
   },
   featureIcon: {
-    fontSize: 20,
     color: '#44ff44',
   },
   featureText: {
-    fontSize: 18,
   },
   activateButton: {
     padding: 18,
@@ -183,8 +177,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activateButtonText: {
-    fontSize: 18,
-    lineHeight: 23,
     fontWeight: '600',
   },
 });

@@ -69,16 +69,16 @@ export default function NotificationsScreen() {
           Stato Notifiche
         </ThemedText>
         <View style={styles.statusItem}>
-          <ThemedText style={styles.statusIcon}>✔️</ThemedText>
-          <ThemedText style={styles.statusText}>Promemoria attivi</ThemedText>
+          <ThemedText type="subtitle" style={styles.statusIcon}>✔️</ThemedText>
+          <ThemedText type="default" style={styles.statusText}>Promemoria attivi</ThemedText>
         </View>
         <View style={styles.statusItem}>
-          <ThemedText style={styles.statusIcon}>✔️</ThemedText>
-          <ThemedText style={styles.statusText}>Ultimo avviso configurato</ThemedText>
+          <ThemedText type="subtitle" style={styles.statusIcon}>✔️</ThemedText>
+          <ThemedText type="default" style={styles.statusText}>Ultimo avviso configurato</ThemedText>
         </View>
         <View style={styles.statusItem}>
-          <ThemedText style={styles.statusIcon}>✔️</ThemedText>
-          <ThemedText style={styles.statusText}>Email contatto attiva</ThemedText>
+          <ThemedText type="subtitle" style={styles.statusIcon}>✔️</ThemedText>
+          <ThemedText type="default" style={styles.statusText}>Email contatto attiva</ThemedText>
         </View>
       </ThemedView>
 
@@ -86,7 +86,7 @@ export default function NotificationsScreen() {
         <ThemedText type="subtitle" style={styles.sectionTitle}>
           Ritardo massimo
         </ThemedText>
-        <ThemedText style={styles.intervalText}>
+        <ThemedText type="large" style={styles.intervalText}>
           {profile?.checkin_interval_hours || 48} ore
         </ThemedText>
       </ThemedView>
@@ -99,11 +99,11 @@ export default function NotificationsScreen() {
           <ScrollView style={styles.alertsList}>
             {alerts.map((alert) => (
               <View key={alert.id} style={styles.alertItem}>
-                <ThemedText style={styles.alertChannel}>
+                <ThemedText type="default" style={styles.alertChannel}>
                   {alert.channel === 'email' ? '✉️' : alert.channel === 'sms' ? '📱' : '📞'} {alert.channel}
                 </ThemedText>
-                <ThemedText style={styles.alertDate}>{formatDate(alert.triggered_at)}</ThemedText>
-                <ThemedText style={styles.alertStatus}>Status: {alert.status}</ThemedText>
+                <ThemedText type="smallMedium" style={styles.alertDate}>{formatDate(alert.triggered_at)}</ThemedText>
+                <ThemedText type="small" style={styles.alertStatus}>Status: {alert.status}</ThemedText>
               </View>
             ))}
           </ScrollView>
@@ -119,8 +119,6 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
     marginBottom: 24,
   },
   section: {
@@ -128,7 +126,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   sectionTitle: {
-    fontSize: 20,
     fontWeight: '600',
     marginBottom: 8,
   },
@@ -141,13 +138,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.05)',
   },
   statusIcon: {
-    fontSize: 20,
   },
   statusText: {
-    fontSize: 16,
   },
   intervalText: {
-    fontSize: 24,
     fontWeight: '600',
     padding: 16,
     borderRadius: 8,
@@ -165,15 +159,12 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   alertChannel: {
-    fontSize: 16,
     fontWeight: '600',
   },
   alertDate: {
-    fontSize: 14,
     opacity: 0.7,
   },
   alertStatus: {
-    fontSize: 12,
     opacity: 0.6,
     marginTop: 4,
   },

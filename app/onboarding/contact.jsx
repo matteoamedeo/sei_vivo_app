@@ -53,15 +53,15 @@ export default function OnboardingContactScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ThemedView style={styles.content}>
-        <ThemedText type="title" style={styles.title}>
+        <ThemedText type="xlarge" style={styles.title}>
           Contatto fidato
         </ThemedText>
-        <ThemedText style={styles.description}>
+        <ThemedText type="default" style={styles.description}>
           Questa persona verrà avvisata solo se non rispondi entro il tempo stabilito.
         </ThemedText>
 
         <ThemedView style={styles.form}>
-          <ThemedText style={styles.label}>Nome</ThemedText>
+          <ThemedText type="default" style={styles.label}>Nome</ThemedText>
           <TextInput
             style={[styles.input, { color: colors.text, borderColor: colors.tabIconDefault }]}
             placeholder="Nome del contatto"
@@ -71,7 +71,7 @@ export default function OnboardingContactScreen() {
             editable={!loading}
           />
 
-          <ThemedText style={styles.label}>
+          <ThemedText type="default" style={styles.label}>
             Email <ThemedText style={styles.required}>*</ThemedText>
           </ThemedText>
           <TextInput
@@ -85,7 +85,7 @@ export default function OnboardingContactScreen() {
             editable={!loading}
           />
 
-          <ThemedText style={styles.label}>Telefono (opzionale)</ThemedText>
+          <ThemedText type="default" style={styles.label}>Telefono (opzionale)</ThemedText>
           <TextInput
             style={[styles.input, { color: colors.text, borderColor: colors.tabIconDefault }]}
             placeholder="+39 123 456 7890"
@@ -105,7 +105,7 @@ export default function OnboardingContactScreen() {
         ]}
         onPress={handleContinue}
         disabled={!email || loading}>
-        <ThemedText style={[
+        <ThemedText type="medium" style={[
           styles.buttonText,
           !email && { color: colors.text }
         ]}>Avanti</ThemedText>
@@ -124,21 +124,16 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
     marginTop: 32,
   },
   description: {
-    fontSize: 16,
     opacity: 0.7,
-    lineHeight: 22,
   },
   form: {
     gap: 16,
     marginTop: 16,
   },
   label: {
-    fontSize: 16,
     fontWeight: '500',
   },
   required: {
@@ -148,7 +143,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     padding: 14,
-    fontSize: 16,
   },
   button: {
     padding: 18,
@@ -158,8 +152,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 18,
-    lineHeight: 23,
     fontWeight: '600',
   },
 });

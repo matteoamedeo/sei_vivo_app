@@ -17,17 +17,17 @@ export default function InfoScreen() {
         </ThemedText>
 
         <ThemedView style={styles.section}>
-          <ThemedText style={styles.bulletPoint}>• Nessun GPS</ThemedText>
-          <ThemedText style={styles.bulletPoint}>• Dati minimi</ThemedText>
-          <ThemedText style={styles.bulletPoint}>• Crittografia</ThemedText>
-          <ThemedText style={styles.bulletPoint}>• Zero social</ThemedText>
+          <ThemedText type="default" style={styles.bulletPoint}>• Nessun GPS</ThemedText>
+          <ThemedText type="default" style={styles.bulletPoint}>• Dati minimi</ThemedText>
+          <ThemedText type="default" style={styles.bulletPoint}>• Crittografia</ThemedText>
+          <ThemedText type="default" style={styles.bulletPoint}>• Zero social</ThemedText>
         </ThemedView>
 
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Come Funziona
           </ThemedText>
-          <ThemedText style={styles.description}>
+          <ThemedText type="default" style={styles.description}>
             SILEME è un'app semplice che ti permette di confermare periodicamente che stai bene.
             Se non fai check-in entro il tempo stabilito, l'app invia automaticamente una notifica
             al tuo contatto di emergenza.
@@ -38,7 +38,7 @@ export default function InfoScreen() {
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Privacy e Sicurezza
           </ThemedText>
-          <ThemedText style={styles.description}>
+          <ThemedText type="default" style={styles.description}>
             La tua privacy è importante. L'app non traccia la tua posizione, non accede al
             microfono o alla fotocamera, e raccoglie solo i dati minimi necessari per funzionare.
             Tutti i dati sono crittografati e salvati in modo sicuro.
@@ -46,7 +46,7 @@ export default function InfoScreen() {
         </ThemedView>
 
         <ThemedView style={styles.versionBox}>
-          <ThemedText style={styles.versionText}>Versione 1.0.0</ThemedText>
+          <ThemedText type="smallMedium" style={styles.versionText}>Versione 1.0.0</ThemedText>
         </ThemedView>
       </ThemedView>
     </ScrollView>
@@ -63,8 +63,6 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
     marginBottom: 8,
   },
   section: {
@@ -72,18 +70,13 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 20,
     fontWeight: '600',
     marginBottom: 8,
   },
   bulletPoint: {
-    fontSize: 16,
-    lineHeight: 28,
     opacity: 0.8,
   },
   description: {
-    fontSize: 16,
-    lineHeight: 24,
     opacity: 0.8,
   },
   versionBox: {
@@ -94,7 +87,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   versionText: {
-    fontSize: 14,
     opacity: 0.6,
   },
 });

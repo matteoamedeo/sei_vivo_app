@@ -70,17 +70,17 @@ export default function HistoryScreen() {
 
       {checkIns.length === 0 ? (
         <ThemedView style={styles.emptyContainer}>
-          <ThemedText style={styles.emptyText}>Nessun check-in registrato</ThemedText>
+          <ThemedText type="default" style={styles.emptyText}>Nessun check-in registrato</ThemedText>
         </ThemedView>
       ) : (
         <ScrollView style={styles.list}>
           {checkIns.map((checkIn) => (
             <View key={checkIn.id} style={styles.item}>
               <View style={styles.itemLeft}>
-                <ThemedText style={styles.checkMark}>✔️</ThemedText>
+                <ThemedText type="subtitle" style={styles.checkMark}>✔️</ThemedText>
                 <View>
-                  <ThemedText style={styles.itemDate}>{formatDate(checkIn.checkin_at)}</ThemedText>
-                  <ThemedText style={styles.itemTime}>{formatTime(checkIn.checkin_at)}</ThemedText>
+                  <ThemedText type="default" style={styles.itemDate}>{formatDate(checkIn.checkin_at)}</ThemedText>
+                  <ThemedText type="smallMedium" style={styles.itemTime}>{formatTime(checkIn.checkin_at)}</ThemedText>
                 </View>
               </View>
             </View>
@@ -97,8 +97,6 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
     marginBottom: 24,
   },
   emptyContainer: {
@@ -107,7 +105,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    fontSize: 16,
     opacity: 0.6,
     fontStyle: 'italic',
   },
@@ -129,14 +126,11 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   checkMark: {
-    fontSize: 20,
   },
   itemDate: {
-    fontSize: 16,
     fontWeight: '500',
   },
   itemTime: {
-    fontSize: 14,
     opacity: 0.7,
   },
 });

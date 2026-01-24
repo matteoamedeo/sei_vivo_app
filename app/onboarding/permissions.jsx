@@ -19,18 +19,18 @@ export default function OnboardingPermissionsScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.content}>
-        <ThemedText type="title" style={styles.emoji}>
+        <ThemedText type="hugeTitle" style={styles.emoji}>
           🔔
         </ThemedText>
         <ThemedText type="title" style={styles.title}>
           Permessi
         </ThemedText>
-        <ThemedText style={styles.description}>
+        <ThemedText type="medium" style={styles.description}>
           Per funzionare al meglio, l'app ha bisogno di inviarti notifiche quando è il momento di fare check-in.
         </ThemedText>
 
         <ThemedView style={styles.infoBox}>
-          <ThemedText style={styles.infoText}>
+          <ThemedText type="default" style={styles.infoText}>
             • Notifiche push per ricordarti il check-in{'\n'}
             • Avvio automatico in background{'\n'}
             • Nessun GPS o tracciamento
@@ -41,7 +41,7 @@ export default function OnboardingPermissionsScreen() {
       <TouchableOpacity
         style={[styles.button, { backgroundColor: colors.tint }]}
         onPress={handleComplete}>
-        <ThemedText style={[styles.buttonText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>Completa</ThemedText>
+        <ThemedText type="medium" style={[styles.buttonText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>Completa</ThemedText>
       </TouchableOpacity>
     </ThemedView>
   );
@@ -60,18 +60,13 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   emoji: {
-    fontSize: 64,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
     textAlign: 'center',
   },
   description: {
-    fontSize: 18,
     textAlign: 'center',
     opacity: 0.8,
-    lineHeight: 26,
     paddingHorizontal: 16,
   },
   infoBox: {
@@ -81,8 +76,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.05)',
   },
   infoText: {
-    fontSize: 16,
-    lineHeight: 24,
     opacity: 0.8,
   },
   button: {
@@ -91,8 +84,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    fontSize: 18,
-    lineHeight: 23,
     fontWeight: '600',
   },
 });

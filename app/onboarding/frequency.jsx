@@ -57,10 +57,10 @@ export default function OnboardingFrequencyScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.content}>
-        <ThemedText type="title" style={styles.title}>
+        <ThemedText type="xlarge" style={styles.title}>
           Ogni quanto?
         </ThemedText>
-        <ThemedText style={styles.description}>
+        <ThemedText type="default" style={styles.description}>
           Scegli ogni quanto tempo devi fare check-in per rimanere attivo.
         </ThemedText>
 
@@ -79,6 +79,7 @@ export default function OnboardingFrequencyScreen() {
               {selectedOption === '5min' && <View style={styles.radioInner} />}
             </View>
             <ThemedText
+              type="medium"
               style={[
                 styles.optionText,
                 selectedOption === '5min' && { color: 'white', fontWeight: '600' },
@@ -101,6 +102,7 @@ export default function OnboardingFrequencyScreen() {
               {selectedOption === '24' && <View style={styles.radioInner} />}
             </View>
             <ThemedText
+              type="medium"
               style={[
                 styles.optionText,
                 selectedOption === '24' && { color: 'white', fontWeight: '600' },
@@ -123,6 +125,7 @@ export default function OnboardingFrequencyScreen() {
               {selectedOption === '48' && <View style={styles.radioInner} />}
             </View>
             <ThemedText
+              type="medium"
               style={[
                 styles.optionText,
                 selectedOption === '48' && { color: 'white', fontWeight: '600' },
@@ -142,6 +145,7 @@ export default function OnboardingFrequencyScreen() {
               {selectedOption === 'custom' && <View style={styles.radioInner} />}
             </View>
             <ThemedText
+              type="medium"
               style={[
                 styles.optionText,
                 selectedOption === 'custom' && { color: 'white', fontWeight: '600' },
@@ -152,7 +156,7 @@ export default function OnboardingFrequencyScreen() {
 
           {selectedOption === 'custom' && (
             <View style={styles.customInputContainer}>
-              <ThemedText style={styles.customLabel}>Intervallo personalizzato (ore)</ThemedText>
+              <ThemedText type="default" style={styles.customLabel}>Intervallo personalizzato (ore)</ThemedText>
               <TextInput
                 style={[styles.customInput, { color: colors.text, borderColor: colors.tabIconDefault }]}
                 placeholder="es. 72"
@@ -165,8 +169,8 @@ export default function OnboardingFrequencyScreen() {
           )}
         </ThemedView>
 
-        <ThemedText style={styles.label}>Orario preferito</ThemedText>
-        <ThemedText style={styles.timeHint}>
+        <ThemedText type="default" style={styles.label}>Orario preferito</ThemedText>
+        <ThemedText type="smallMedium" style={styles.timeHint}>
           {checkinTime} - Puoi modificarlo nelle impostazioni
         </ThemedText>
       </ThemedView>
@@ -175,7 +179,7 @@ export default function OnboardingFrequencyScreen() {
         style={[styles.button, { backgroundColor: colors.tint }]}
         onPress={handleContinue}
         disabled={loading}>
-        <ThemedText style={[styles.buttonText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>Conferma</ThemedText>
+        <ThemedText type="medium" style={[styles.buttonText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>Conferma</ThemedText>
       </TouchableOpacity>
     </ThemedView>
   );
@@ -193,13 +197,9 @@ const styles = StyleSheet.create({
     marginTop: 32,
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
   },
   description: {
-    fontSize: 16,
     opacity: 0.7,
-    lineHeight: 22,
   },
   options: {
     gap: 16,
@@ -229,16 +229,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   optionText: {
-    fontSize: 18,
-    lineHeight: 23,
   },
   label: {
-    fontSize: 16,
     fontWeight: '500',
     marginTop: 8,
   },
   timeHint: {
-    fontSize: 14,
     opacity: 0.6,
     fontStyle: 'italic',
   },
@@ -248,8 +244,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    fontSize: 18,
-    lineHeight: 23,
     fontWeight: '600',
   },
   customInputContainer: {
@@ -257,13 +251,11 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   customLabel: {
-    fontSize: 16,
     fontWeight: '500',
   },
   customInput: {
     borderWidth: 1,
     borderRadius: 8,
     padding: 14,
-    fontSize: 16,
   },
 });

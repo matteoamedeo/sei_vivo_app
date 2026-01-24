@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { isOnboardingComplete } from '@/lib/database';
+import { useRouter } from 'expo-router';
+import React, { useEffect } from 'react';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 
 export default function SplashScreen() {
   const router = useRouter();
@@ -40,10 +40,10 @@ export default function SplashScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title" style={styles.title}>
+      <ThemedText type="bigTitle" style={styles.title}>
         SILEME
       </ThemedText>
-      <ThemedText style={styles.subtitle}>
+      <ThemedText type="subtitle" style={styles.subtitle}>
         Are you alive?
       </ThemedText>
       <ActivityIndicator size="large" style={styles.loader} />
@@ -59,11 +59,8 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   title: {
-    fontSize: 48,
-    fontWeight: 'bold',
   },
   subtitle: {
-    fontSize: 20,
     opacity: 0.7,
   },
   loader: {

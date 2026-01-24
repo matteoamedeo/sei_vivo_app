@@ -14,13 +14,13 @@ export default function OnboardingIntroScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.content}>
-        <ThemedText type="title" style={styles.emoji}>
+        <ThemedText type="hugeTitle" style={styles.emoji}>
           👋
         </ThemedText>
         <ThemedText type="title" style={styles.title}>
           Benvenuto
         </ThemedText>
-        <ThemedText style={styles.description}>
+        <ThemedText type="medium" style={styles.description}>
           Conferma che stai bene. Se non lo fai, avvisiamo qualcuno per te.
         </ThemedText>
       </ThemedView>
@@ -28,7 +28,7 @@ export default function OnboardingIntroScreen() {
       <TouchableOpacity
         style={[styles.button, { backgroundColor: colors.tint }]}
         onPress={() => router.push('/onboarding/contact')}>
-        <ThemedText style={[styles.buttonText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>Continua</ThemedText>
+        <ThemedText type="medium" style={[styles.buttonText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>Continua</ThemedText>
       </TouchableOpacity>
     </ThemedView>
   );
@@ -47,18 +47,13 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   emoji: {
-    fontSize: 64,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
     textAlign: 'center',
   },
   description: {
-    fontSize: 18,
     textAlign: 'center',
     opacity: 0.8,
-    lineHeight: 26,
     paddingHorizontal: 16,
   },
   button: {
@@ -67,8 +62,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    fontSize: 18,
-    lineHeight: 23,
     fontWeight: '600',
   },
 });

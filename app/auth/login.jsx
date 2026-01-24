@@ -60,7 +60,7 @@ export default function LoginScreen() {
         <ThemedText type="title" style={styles.title}>
           SILEME
         </ThemedText>
-        <ThemedText style={styles.subtitle}>
+        <ThemedText type="default" style={styles.subtitle}>
           Are you alive?
         </ThemedText>
 
@@ -92,7 +92,7 @@ export default function LoginScreen() {
           {loading ? (
             <ActivityIndicator color={colorScheme === 'dark' ? colors.text : 'white'} />
           ) : (
-            <ThemedText style={[styles.buttonText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>Accedi</ThemedText>
+            <ThemedText type="default" style={[styles.buttonText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>Accedi</ThemedText>
           )}
         </TouchableOpacity>
 
@@ -100,7 +100,7 @@ export default function LoginScreen() {
           style={[styles.buttonSecondary, { borderColor: colors.tint }]}
           onPress={handleSignUp}
           disabled={loading}>
-          <ThemedText style={[styles.buttonTextSecondary, { color: colors.tint }]}>
+          <ThemedText type="default" style={[styles.buttonTextSecondary, { color: colors.tint }]}>
             Registrati
           </ThemedText>
         </TouchableOpacity>
@@ -121,13 +121,10 @@ const styles = StyleSheet.create({
     maxWidth: 400,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
     marginBottom: 8,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
     marginBottom: 32,
     textAlign: 'center',
     opacity: 0.7,
@@ -137,7 +134,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     marginBottom: 16,
-    fontSize: 16,
   },
   button: {
     padding: 16,
@@ -152,13 +148,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   buttonText: {
-    fontSize: 16,
-    lineHeight: 20,
     fontWeight: '600',
   },
   buttonTextSecondary: {
-    fontSize: 16,
-    lineHeight: 20,
     fontWeight: '600',
   },
 });

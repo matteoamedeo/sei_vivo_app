@@ -108,26 +108,26 @@ export default function ContactsScreen() {
 
       {contacts.length === 0 ? (
         <ThemedView style={styles.emptyContainer}>
-          <ThemedText style={styles.emptyText}>Nessun contatto configurato</ThemedText>
+          <ThemedText type="default" style={styles.emptyText}>Nessun contatto configurato</ThemedText>
         </ThemedView>
       ) : (
         <ScrollView style={styles.list}>
           {contacts.map((contact) => (
             <View key={contact.id} style={styles.contactItem}>
               <View style={styles.contactInfo}>
-                <ThemedText style={styles.contactName}>👤 {contact.name}</ThemedText>
-                <ThemedText style={styles.contactEmail}>✉️ {contact.email}</ThemedText>
+                <ThemedText type="medium" style={styles.contactName}>👤 {contact.name}</ThemedText>
+                <ThemedText type="smallMedium" style={styles.contactEmail}>✉️ {contact.email}</ThemedText>
                 {contact.phone && (
-                  <ThemedText style={styles.contactPhone}>📞 {contact.phone}</ThemedText>
+                  <ThemedText type="smallMedium" style={styles.contactPhone}>📞 {contact.phone}</ThemedText>
                 )}
-                <ThemedText style={styles.contactPriority}>
+                <ThemedText type="small" style={styles.contactPriority}>
                   Priorità: {contact.priority}
                 </ThemedText>
               </View>
               <TouchableOpacity
                 style={styles.deleteButton}
                 onPress={() => handleDelete(contact.id, contact.name)}>
-                <ThemedText style={styles.deleteButtonText}>Elimina</ThemedText>
+                <ThemedText type="smallMedium" style={styles.deleteButtonText}>Elimina</ThemedText>
               </TouchableOpacity>
             </View>
           ))}
@@ -136,7 +136,7 @@ export default function ContactsScreen() {
 
       {showAddForm ? (
         <ThemedView style={styles.addForm}>
-          <ThemedText type="subtitle" style={styles.formTitle}>Aggiungi Contatto</ThemedText>
+          <ThemedText type="medium" style={styles.formTitle}>Aggiungi Contatto</ThemedText>
           <TextInput
             style={[styles.input, { color: colors.text, borderColor: colors.tabIconDefault }]}
             placeholder="Nome"
@@ -170,7 +170,7 @@ export default function ContactsScreen() {
                 setNewContactEmail('');
                 setNewContactPhone('');
               }}>
-              <ThemedText style={[styles.cancelButtonText, { color: colors.text }]}>Annulla</ThemedText>
+              <ThemedText type="default" style={[styles.cancelButtonText, { color: colors.text }]}>Annulla</ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.addButton, { backgroundColor: colors.tint }]}
@@ -179,7 +179,7 @@ export default function ContactsScreen() {
               {adding ? (
                 <ActivityIndicator color={colorScheme === 'dark' ? colors.text : 'white'} />
               ) : (
-                <ThemedText style={[styles.addButtonText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>Aggiungi</ThemedText>
+                <ThemedText type="default" style={[styles.addButtonText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>Aggiungi</ThemedText>
               )}
             </TouchableOpacity>
           </View>
@@ -194,13 +194,13 @@ export default function ContactsScreen() {
             }
             setShowAddForm(true);
           }}>
-          <ThemedText style={[styles.addButtonMainText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>+ Aggiungi</ThemedText>
+          <ThemedText type="medium" style={[styles.addButtonMainText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>+ Aggiungi</ThemedText>
         </TouchableOpacity>
       )}
 
       {!isPremium && contacts.length >= 1 && !showAddForm && (
         <ThemedView style={styles.premiumHint}>
-          <ThemedText style={styles.premiumText}>
+          <ThemedText type="smallMedium" style={styles.premiumText}>
             Versione gratuita: massimo 1 contatto. Passa a Premium per più contatti.
           </ThemedText>
         </ThemedView>
@@ -215,8 +215,6 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
     marginBottom: 24,
   },
   emptyContainer: {
@@ -225,7 +223,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    fontSize: 16,
     opacity: 0.6,
     fontStyle: 'italic',
   },
@@ -243,19 +240,15 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   contactName: {
-    fontSize: 18,
     fontWeight: '600',
   },
   contactEmail: {
-    fontSize: 14,
     opacity: 0.8,
   },
   contactPhone: {
-    fontSize: 14,
     opacity: 0.8,
   },
   contactPriority: {
-    fontSize: 12,
     opacity: 0.6,
     marginTop: 4,
   },
@@ -267,8 +260,6 @@ const styles = StyleSheet.create({
   },
   deleteButtonText: {
     color: 'white',
-    fontSize: 14,
-    lineHeight: 18,
     fontWeight: '600',
   },
   premiumHint: {
@@ -278,7 +269,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   premiumText: {
-    fontSize: 14,
     opacity: 0.8,
     textAlign: 'center',
   },
@@ -290,7 +280,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   formTitle: {
-    fontSize: 18,
     fontWeight: '600',
     marginBottom: 8,
   },
@@ -298,7 +287,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     padding: 12,
-    fontSize: 16,
   },
   formButtons: {
     flexDirection: 'row',
@@ -313,8 +301,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   cancelButtonText: {
-    fontSize: 16,
-    lineHeight: 20,
     fontWeight: '600',
   },
   addButton: {
@@ -324,8 +310,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addButtonText: {
-    fontSize: 16,
-    lineHeight: 20,
     fontWeight: '600',
   },
   addButtonMain: {
@@ -335,8 +319,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   addButtonMainText: {
-    fontSize: 18,
-    lineHeight: 23,
     fontWeight: '600',
   },
 });
