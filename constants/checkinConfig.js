@@ -12,7 +12,7 @@
 
 export const CHECKIN_CONFIG = {
   // Tipo di reset: 'midnight' per sbloccare dopo mezzanotte, 'minutes' per sbloccare dopo X minuti
-  resetType: 'midnight', // oppure 'minutes'
+  resetType: 'minutes', // oppure 'minutes'
   
   // Minuti di attesa prima di poter rifare il check-in (solo se resetType è 'minutes')
   resetAfterMinutes: 2,
