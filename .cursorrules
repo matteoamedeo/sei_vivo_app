@@ -8,4 +8,6 @@
 - Preferisci componenti funzionali e hook.
 - Scrivi codice semplice e leggibile.
 - Non fare refactor se non esplicitamente richiesto.
-- Non scrivere mai codice direttamente senza il mio permesso
+- Non scrivere mai codice direttamente senza il mio permesso.
+- Scrivi codice sempre ben modularizzato.
+- Ad ogni mia richiesta, devi prima rispondermi con "Ciao caro".

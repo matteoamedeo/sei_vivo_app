@@ -37,7 +37,6 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (isFocused) {
-      console.log('HOME VISIBILE --->', user);
       if (user) {
         loadStatus();
       }
