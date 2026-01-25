@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Switch, TextInput, TouchableOpacity, Alert, ActivityIndicator, ScrollView, View } from 'react-native';
 import { InfoModal } from '@/components/InfoModal';
 import { PremiumModal } from '@/components/PremiumModal';
 import { Spinner } from '@/components/Spinner';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'expo-router';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import { useAuth } from '@/contexts/AuthContext';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { getProfile, updateProfile } from '@/lib/database';
+import { useIsFocused } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Switch, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function SettingsScreen() {
   const { user, signOut } = useAuth();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const isFocused = useIsFocused();
 
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -33,16 +35,19 @@ export default function SettingsScreen() {
   const [showInfoModal, setShowInfoModal] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      loadProfile();
+    if (isFocused) {
+      if (user) {
+        loadProfile();
+      }
     }
-  }, [user]);
+  }, [isFocused]);
 
   const loadProfile = async () => {
     if (!user) return;
 
     try {
       const data = await getProfile(user.id);
+      console.log('data', data);
       if (data) {
         setProfile(data);
         const interval = parseFloat(data.checkin_interval_hours) || 48;
@@ -103,11 +108,16 @@ export default function SettingsScreen() {
 
   const handleMonitoringToggle = async (value) => {
     if (!user) return;
+  
+    // Aggiorno subito lo switch (ottimistic update)
+    setMonitoringEnabled(value);
     setUpdatingMonitoring(true);
+  
     try {
       await updateProfile(user.id, { monitoring_enabled: value });
-      setMonitoringEnabled(value);
     } catch (e) {
+      // Se fallisce, ripristino il valore precedente
+      setMonitoringEnabled(!value);
       Alert.alert('Errore', e.message || 'Impossibile aggiornare');
     } finally {
       setUpdatingMonitoring(false);
