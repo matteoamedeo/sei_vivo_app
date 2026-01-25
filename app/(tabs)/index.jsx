@@ -12,6 +12,7 @@ import {
   performCheckIn,
   updateProfile,
 } from '@/lib/database';
+import { useIsFocused } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -20,7 +21,8 @@ export default function HomeScreen() {
   const { user } = useAuth();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-
+  const isFocused = useIsFocused();
+  
   const [status, setStatus] = useState('OK');
   const [hoursRemaining, setHoursRemaining] = useState(null);
   const [lastCheckIn, setLastCheckIn] = useState(null);
@@ -33,12 +35,14 @@ export default function HomeScreen() {
   const [resuming, setResuming] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      loadStatus();
-      const interval = setInterval(loadStatus, 60000); // Aggiorna ogni minuto
-      return () => clearInterval(interval);
+    if (isFocused) {
+      console.log('HOME VISIBILE --->', user);
+      if (user) {
+        loadStatus();
+      }
+  
     }
-  }, [user]);
+  }, [isFocused]);
 
   // Timer che aggiorna ogni secondo
   useEffect(() => {
