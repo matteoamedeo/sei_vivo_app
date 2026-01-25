@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Switch, TextInput, TouchableOpacity, Alert, ActivityIndicator, ScrollView, View } from 'react-native';
+import { InfoModal } from '@/components/InfoModal';
+import { PremiumModal } from '@/components/PremiumModal';
+import { Spinner } from '@/components/Spinner';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useAuth } from '@/contexts/AuthContext';
@@ -25,6 +28,9 @@ export default function SettingsScreen() {
   const [customInterval, setCustomInterval] = useState('');
   const [monitoringEnabled, setMonitoringEnabled] = useState(true);
   const [updatingMonitoring, setUpdatingMonitoring] = useState(false);
+  const [activating, setActivating] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -108,6 +114,33 @@ export default function SettingsScreen() {
     }
   };
 
+  const handleActivatePremium = () => {
+    if (!user) return;
+    Alert.alert(
+      'Premium',
+      'Questa è una versione demo. In una versione reale, qui si integrerebbe un sistema di pagamento.',
+      [
+        { text: 'Annulla', style: 'cancel' },
+        {
+          text: 'Attiva Demo',
+          onPress: async () => {
+            setActivating(true);
+            try {
+              await updateProfile(user.id, { is_premium: true });
+              await loadProfile();
+              setShowPremiumModal(false);
+              Alert.alert('Successo', 'Premium attivato (demo)');
+            } catch (error) {
+              Alert.alert('Errore', error.message || 'Errore durante l\'attivazione');
+            } finally {
+              setActivating(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const handleSignOut = async () => {
     Alert.alert(
       'Logout',
@@ -127,11 +160,7 @@ export default function SettingsScreen() {
   };
 
   if (loading) {
-    return (
-      <ThemedView style={styles.container}>
-        <ActivityIndicator size="large" color={colors.tint} />
-      </ThemedView>
-    );
+    return <Spinner />;
   }
 
   return (
@@ -317,17 +346,44 @@ export default function SettingsScreen() {
           </ThemedText>
         </ThemedView>
 
-        <ThemedView style={styles.section}>
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Privacy
-          </ThemedText>
-          <ThemedText type="smallMedium" style={styles.infoText}>
-            • Nessun GPS{'\n'}
-            • Dati minimi{'\n'}
-            • Crittografia{'\n'}
-            • Zero social
-          </ThemedText>
-        </ThemedView>
+        <View style={styles.sectionBlock}>
+          <TouchableOpacity
+            style={styles.sectionRow}
+            onPress={() => setShowPremiumModal(true)}
+            activeOpacity={0.7}>
+            <View style={styles.sectionRowLeft}>
+              <ThemedText type="subtitle" style={styles.sectionTitle}>⭐ Premium</ThemedText>
+              <ThemedText type="smallMedium" style={styles.sectionRowHint}>
+                {profile?.is_premium ? '✓ Attivo' : 'Apri'}
+              </ThemedText>
+            </View>
+            <ThemedText type="default" style={styles.chevron}>›</ThemedText>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.sectionRow}
+            onPress={() => setShowInfoModal(true)}
+            activeOpacity={0.7}>
+            <View style={styles.sectionRowLeft}>
+              <ThemedText type="subtitle" style={styles.sectionTitle}>Informazioni</ThemedText>
+              <ThemedText type="smallMedium" style={styles.sectionRowHint}>Privacy, come funziona</ThemedText>
+            </View>
+            <ThemedText type="default" style={styles.chevron}>›</ThemedText>
+          </TouchableOpacity>
+        </View>
+
+        <PremiumModal
+          visible={showPremiumModal}
+          onClose={() => setShowPremiumModal(false)}
+          isPremium={profile?.is_premium}
+          onActivate={handleActivatePremium}
+          activating={activating}
+        />
+
+        <InfoModal
+          visible={showInfoModal}
+          onClose={() => setShowInfoModal(false)}
+          version="1.0.0"
+        />
 
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
@@ -474,5 +530,26 @@ const styles = StyleSheet.create({
   },
   customLabel: {
     fontWeight: '500',
+  },
+  sectionBlock: {
+    marginBottom: 24,
+  },
+  sectionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingRight: 8,
+  },
+  sectionRowLeft: {
+    flex: 1,
+  },
+  sectionRowHint: {
+    opacity: 0.7,
+    marginTop: 2,
+  },
+  chevron: {
+    opacity: 0.5,
+    fontSize: 24,
   },
 });
