@@ -1,0 +1,11 @@
+# Regole del progetto Life Check
+
+- Questo progetto usa SOLO JavaScript. Non usare mai TypeScript.
+- Non creare file .ts o .tsx.
+- Non usare tipi, interfacce o generics.
+- Usa React Native con Expo.
+- Usa Supabase per autenticazione e database.
+- Preferisci componenti funzionali e hook.
+- Scrivi codice semplice e leggibile.
+- Non fare refactor se non esplicitamente richiesto.
+- Non scrivere mai codice direttamente senza il mio permesso

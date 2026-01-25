@@ -1,3 +1,4 @@
+import { Spinner } from '@/components/Spinner';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { CHECKIN_CONFIG } from '@/constants/checkinConfig';
@@ -117,6 +118,7 @@ export default function HomeScreen() {
   const loadStatus = async () => {
     if (!user) return;
 
+    setLoading(true);
     try {
       const [currentStatus, hours, profile, hasCheckedIn] = await Promise.all([
         getCheckInStatus(user.id),
@@ -186,11 +188,7 @@ export default function HomeScreen() {
   };
 
   if (loading) {
-    return (
-      <ThemedView style={styles.container}>
-        <ActivityIndicator size="large" color={colors.tint} />
-      </ThemedView>
-    );
+    return <Spinner />;
   }
 
   const getStatusColor = () => {
