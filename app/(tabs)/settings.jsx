@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, Alert, ActivityIndicator, ScrollView, View } from 'react-native';
+import { StyleSheet, Switch, TextInput, TouchableOpacity, Alert, ActivityIndicator, ScrollView, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useAuth } from '@/contexts/AuthContext';
@@ -23,6 +23,8 @@ export default function SettingsScreen() {
   const [language, setLanguage] = useState('it');
   const [selectedIntervalOption, setSelectedIntervalOption] = useState('48'); // '5min', '24', '48', 'custom'
   const [customInterval, setCustomInterval] = useState('');
+  const [monitoringEnabled, setMonitoringEnabled] = useState(true);
+  const [updatingMonitoring, setUpdatingMonitoring] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -41,7 +43,8 @@ export default function SettingsScreen() {
         setCheckinInterval(interval);
         setCheckinTime(data.checkin_time);
         setTimezone(data.timezone || 'Europe/Rome');
-        
+        setMonitoringEnabled(data.monitoring_enabled !== false);
+
         // Determina quale opzione selezionare in base all'intervallo corrente
         if (interval === 5 / 60 || Math.abs(interval - (5 / 60)) < 0.001) {
           setSelectedIntervalOption('5min');
@@ -92,6 +95,19 @@ export default function SettingsScreen() {
     }
   };
 
+  const handleMonitoringToggle = async (value) => {
+    if (!user) return;
+    setUpdatingMonitoring(true);
+    try {
+      await updateProfile(user.id, { monitoring_enabled: value });
+      setMonitoringEnabled(value);
+    } catch (e) {
+      Alert.alert('Errore', e.message || 'Impossibile aggiornare');
+    } finally {
+      setUpdatingMonitoring(false);
+    }
+  };
+
   const handleSignOut = async () => {
     Alert.alert(
       'Logout',
@@ -124,6 +140,27 @@ export default function SettingsScreen() {
         <ThemedText type="title" style={styles.title}>
           Impostazioni
         </ThemedText>
+
+        <ThemedView style={styles.section}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            Monitoraggio
+          </ThemedText>
+          <View style={styles.row}>
+            <ThemedText type="default" style={styles.label}>Monitoraggio attivo</ThemedText>
+            <Switch
+              value={monitoringEnabled}
+              onValueChange={handleMonitoringToggle}
+              disabled={updatingMonitoring}
+              trackColor={{ false: colors.tabIconDefault, true: colors.tint }}
+              thumbColor="#fff"
+            />
+          </View>
+          <ThemedText type="smallMedium" style={styles.hint}>
+            {monitoringEnabled
+              ? 'Se non fai check-in in tempo, i tuoi contatti verranno avvisati.'
+              : 'In pausa: nessun avviso ai contatti. Riattiva quando vuoi.'}
+          </ThemedText>
+        </ThemedView>
 
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
@@ -351,6 +388,15 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontWeight: '600',
     marginBottom: 4,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  hint: {
+    opacity: 0.7,
+    marginTop: 4,
   },
   label: {
     fontWeight: '500',

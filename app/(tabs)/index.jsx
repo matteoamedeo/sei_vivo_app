@@ -10,6 +10,7 @@ import {
   getProfile,
   hasCheckedInToday,
   performCheckIn,
+  updateProfile,
 } from '@/lib/database';
 import * as Haptics from 'expo-haptics';
 import React, { useEffect, useState } from 'react';
@@ -29,6 +30,7 @@ export default function HomeScreen() {
   const [profile, setProfile] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [canCheckIn, setCanCheckIn] = useState(true);
+  const [resuming, setResuming] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -165,6 +167,20 @@ export default function HomeScreen() {
     }
   };
 
+  const handleResumeMonitoring = async () => {
+    if (!user || resuming) return;
+    setResuming(true);
+    try {
+      await updateProfile(user.id, { monitoring_enabled: true });
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      await loadStatus();
+    } catch (error) {
+      Alert.alert('Errore', error.message || 'Impossibile riattivare');
+    } finally {
+      setResuming(false);
+    }
+  };
+
   if (loading) {
     return (
       <ThemedView style={styles.container}>
@@ -174,18 +190,21 @@ export default function HomeScreen() {
   }
 
   const getStatusColor = () => {
+    if (status === 'PAUSED') return '#888';
     if (status === 'OK') return '#44ff44';
     if (status === 'WARNING') return '#ffaa00';
     return '#ff4444';
   };
 
   const getStatusEmoji = () => {
+    if (status === 'PAUSED') return '⏸';
     if (status === 'OK') return '🟢';
     if (status === 'WARNING') return '🟡';
     return '🔴';
   };
 
   const getStatusText = () => {
+    if (status === 'PAUSED') return 'In pausa';
     if (status === 'OK') return 'OK';
     if (status === 'WARNING') return 'Attento';
     return 'Allarme attivo';
@@ -249,7 +268,7 @@ export default function HomeScreen() {
         </ThemedText>
       </View>
 
-      {lastCheckIn && profile?.checkin_interval_hours && (
+      {status !== 'PAUSED' && lastCheckIn && profile?.checkin_interval_hours && (
         <View style={styles.countdownContainer}>
           <ThemedText type="smallMedium" style={styles.countdownLabel}>Prossimo check-in</ThemedText>
           <ThemedText type="title" style={[styles.countdownTime, { fontFamily: 'monospace' }]}>
@@ -274,35 +293,57 @@ export default function HomeScreen() {
       )}
 
       <View style={styles.checkInContainer}>
-        <ThemedText type="subtitle" style={styles.questionText}>Tutto bene oggi?</ThemedText>
-        
-        <TouchableOpacity
-          style={[
-            styles.checkInButton,
-            {
-              backgroundColor: canCheckIn ? colors.tint : colors.tabIconDefault,
-              opacity: checkingIn ? 0.6 : 1,
-            },
-          ]}
-          onPress={handleCheckIn}
-          disabled={!canCheckIn || checkingIn}>
-          {checkingIn ? (
-            <ActivityIndicator color={
-              canCheckIn 
-                ? (colorScheme === 'dark' ? colors.text : 'white')
-                : colors.text
-            } />
-          ) : (
-            <ThemedText type="large" style={[
-              styles.checkInButtonText,
-              canCheckIn 
-                ? { color: colorScheme === 'dark' ? colors.text : 'white' }
-                : { color: colors.text }
-            ]}>
-              {canCheckIn ? 'SONO VIVO' : (CHECKIN_CONFIG.resetType === 'midnight' ? '✓ Già fatto oggi' : `Attendi ${CHECKIN_CONFIG.resetAfterMinutes} minuti`)}
+        {status === 'PAUSED' ? (
+          <>
+            <ThemedText type="subtitle" style={styles.questionText}>Monitoraggio in pausa</ThemedText>
+            <ThemedText type="default" style={[styles.questionText, { opacity: 0.7 }]}>
+              I tuoi contatti non riceveranno avvisi. Riattiva quando vuoi.
             </ThemedText>
-          )}
-        </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.checkInButton, { backgroundColor: colors.tint, opacity: resuming ? 0.6 : 1 }]}
+              onPress={handleResumeMonitoring}
+              disabled={resuming}>
+              {resuming ? (
+                <ActivityIndicator color={colorScheme === 'dark' ? colors.text : 'white'} />
+              ) : (
+                <ThemedText type="large" style={[styles.checkInButtonText, { color: colorScheme === 'dark' ? colors.text : 'white' }]}>
+                  Riattiva monitoraggio
+                </ThemedText>
+              )}
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <ThemedText type="subtitle" style={styles.questionText}>Tutto bene oggi?</ThemedText>
+            <TouchableOpacity
+              style={[
+                styles.checkInButton,
+                {
+                  backgroundColor: canCheckIn ? colors.tint : colors.tabIconDefault,
+                  opacity: checkingIn ? 0.6 : 1,
+                },
+              ]}
+              onPress={handleCheckIn}
+              disabled={!canCheckIn || checkingIn}>
+              {checkingIn ? (
+                <ActivityIndicator color={
+                  canCheckIn 
+                    ? (colorScheme === 'dark' ? colors.text : 'white')
+                    : colors.text
+                } />
+              ) : (
+                <ThemedText type="large" style={[
+                  styles.checkInButtonText,
+                  canCheckIn 
+                    ? { color: colorScheme === 'dark' ? colors.text : 'white' }
+                    : { color: colors.text }
+                ]}>
+                  {canCheckIn ? 'SONO VIVO' : (CHECKIN_CONFIG.resetType === 'midnight' ? '✓ Già fatto oggi' : `Attendi ${CHECKIN_CONFIG.resetAfterMinutes} minuti`)}
+                </ThemedText>
+              )}
+            </TouchableOpacity>
+          </>
+        )}
       </View>
 
       <View style={styles.lastCheckInContainer}>
